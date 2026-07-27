@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>王者荣耀</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background: #0d0d1a;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(180, 130, 50, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(200, 50, 50, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(180, 130, 50, 0.05) 0%, transparent 50%);
+      font-family: 'Noto Serif SC', 'SimSun', serif;
+      color: #e0d5c0;
+      overflow-x: hidden;
+    }
+
+    /* ===== 顶部导航栏 ===== */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 64px;
+      background: linear-gradient(180deg, rgba(20, 15, 10, 0.95), rgba(15, 10, 5, 0.85));
+      border-bottom: 1px solid rgba(180, 140, 70, 0.3);
+      position: relative;
+    }
+
+    .navbar::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #c9a96e, #f0d78c, #c9a96e, transparent);
+    }
+
+    .navbar .brand {
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(180deg, #f0d78c 0%, #c9a96e 40%, #8b6914 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+    }
+
+    .navbar .user-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #c9a96e;
+    }
+
+    .navbar .user-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #c9a96e;
+      background: linear-gradient(135deg, #2a1f0e, #4a3820);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #f0d78c;
+    }
+
+    .navbar .username {
+      font-weight: 700;
+      color: #f0d78c;
+    }
+
+    .navbar .logout {
+      margin-left: 16px;
+      padding: 6px 16px;
+      border: 1px solid rgba(180, 140, 70, 0.5);
+      border-radius: 4px;
+      color: #c9a96e;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .navbar .logout:hover {
+      background: rgba(180, 140, 70, 0.15);
+      border-color: #f0d78c;
+      color: #f0d78c;
+    }
+
+    /* ===== 主内容 ===== */
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+    }
+
+    /* 标题区域 */
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .hero .title {
+      font-size: 52px;
+      font-weight: 900;
+      letter-spacing: 12px;
+      background: linear-gradient(180deg, #fdf4c0 0%, #e2b448 30%, #9b6914 70%, #5c3d08 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin-bottom: 12px;
+    }
+
+    .hero .subtitle {
+      font-size: 16px;
+      letter-spacing: 6px;
+      color: #8b7355;
+    }
+
+    .hero .welcome {
+      margin-top: 20px;
+      font-size: 15px;
+      color: #a09070;
+    }
+
+    .hero .welcome span {
+      color: #f0d78c;
+      font-weight: 700;
+    }
+
+    /* 装饰分隔线 */
+    .divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c9a96e, #f0d78c, #c9a96e, transparent);
+      margin: 0 auto 50px;
+    }
+
+    /* 模式卡片 */
+    .modes {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mode-card {
+      width: 200px;
+      padding: 40px 24px;
+      background: linear-gradient(180deg, rgba(30, 20, 10, 0.9), rgba(15, 10, 5, 0.95));
+      border: 1px solid rgba(180, 140, 70, 0.25);
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #c9a96e, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .mode-card:hover {
+      border-color: rgba(200, 160, 80, 0.6);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(180, 130, 50, 0.1);
+    }
+
+    .mode-card:hover::before {
+      opacity: 1;
+    }
+
+    .mode-card .icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .mode-card .name {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #c9a96e;
+      margin-bottom: 8px;
+    }
+
+    .mode-card .desc {
+      font-size: 12px;
+      color: #6b5c4a;
+      letter-spacing: 1px;
+    }
+
+    .mode-card.locked {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .mode-card.locked:hover {
+      transform: none;
+      border-color: rgba(180, 140, 70, 0.25);
+      box-shadow: none;
+    }
+
+    .mode-card.locked:hover::before {
+      opacity: 0;
+    }
+
+    .mode-card.locked .lock {
+      font-size: 12px;
+      color: #555;
+      margin-top: 8px;
+      letter-spacing: 2px;
+    }
+
+    /* 底部 */
+    .footer {
+      text-align: center;
+      padding: 40px;
+      color: #443a2a;
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+
+    /* 粒子背景 */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: #c9a96e;
+      border-radius: 50%;
+      animation: floatUp 6s linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* 内容层 */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 粒子背景 -->
+  <div class="particles" id="particles"></div>
+
+  <div class="wrapper">
+    <!-- 顶部导航 -->
+    <nav class="navbar">
+      <div class="brand">王 者 荣 耀</div>
+      <div class="user-area">
+        <div class="user-icon">⚔</div>
+        <span>召唤师：</span>
+        <span class="username" id="displayName"></span>
+        <a class="logout" href="index.html">退出登录</a>
+      </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="main">
+      <div class="hero">
+        <h1 class="title">欢迎来到王者荣耀</h1>
+        <p class="subtitle">S35 赛季 · 天命之刻</p>
+        <p class="welcome">召唤师 <span id="welcomeName"></span>，敌军还有5秒到达战场！</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="modes">
+        <div class="mode-card" onclick="alert('匹配中...请等待')">
+          <div class="icon">⚔️</div>
+          <div class="name">排位赛</div>
+          <div class="desc">5v5 王者峡谷</div>
+        </div>
+        <div class="mode-card" onclick="location.href='game.html'">
+          <div class="icon">🤖</div>
+          <div class="name">人机模式</div>
+          <div class="desc">3v3 王者峡谷</div>
+        </div>
+        <div class="mode-card" onclick="alert('匹配中...请等待')">
+          <div class="icon">🎭</div>
+          <div class="name">娱乐模式</div>
+          <div class="desc">无限乱斗</div>
+        </div>
+        <div class="mode-card locked">
+          <div class="icon">🔒</div>
+          <div class="name">巅峰赛</div>
+          <div class="desc">达到王者段位解锁</div>
+          <div class="lock">🔒 未解锁</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      抵制不良游戏 · 拒绝盗版游戏 · 注意自我保护 · 谨防受骗上当
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const username = params.get('username') || '未知召唤师';
+      document.getElementById('displayName').textContent = username;
+      document.getElementById('welcomeName').textContent = username;
+
+      // 生成金色粒子
+      var container = document.getElementById('particles');
+      for (var i = 0; i < 30; i++) {
+        var p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 6 + 's';
+        p.style.animationDuration = (4 + Math.random() * 6) + 's';
+        container.appendChild(p);
+      }
+    })();
+  </script>
+
+</body>
+</html>

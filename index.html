@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      width: 360px;
+      max-width: 90vw;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: #555;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
+
+    /* 成功页面 */
+    .success-box {
+      display: none;
+      text-align: center;
+      background: #fff;
+      padding: 60px 40px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      width: 360px;
+      max-width: 90vw;
+    }
+
+    .success-box.show { display: block; }
+
+    .success-box .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .success-box h2 {
+      color: #27ae60;
+      font-size: 28px;
+    }
+
+    .login-box.hide,
+    .register-box.hide { display: none; }
+
+    .register-box {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      width: 360px;
+      max-width: 90vw;
+    }
+
+    .register-box h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .switch-link {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .switch-link a {
+      color: #667eea;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .switch-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- 登录表单 -->
+  <div class="login-box" id="loginBox">
+    <h2>欢迎登录</h2>
+
+    <div class="error-msg" id="loginErrorMsg">用户名或密码错误</div>
+
+    <div class="form-group">
+      <label for="loginUsername">用户名</label>
+      <input type="text" id="loginUsername" placeholder="请输入用户名" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label for="loginPassword">密码</label>
+      <input type="password" id="loginPassword" placeholder="请输入密码">
+    </div>
+
+    <button class="btn" onclick="handleLogin()">登 录</button>
+
+    <div class="switch-link">
+      还没有账号？<a onclick="switchToRegister()">立即注册</a>
+    </div>
+  </div>
+
+  <!-- 注册表单 -->
+  <div class="register-box hide" id="registerBox">
+    <h2>用户注册</h2>
+
+    <div class="error-msg" id="registerErrorMsg"></div>
+
+    <div class="form-group">
+      <label for="regUsername">用户名</label>
+      <input type="text" id="regUsername" placeholder="请输入用户名" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label for="regPassword">密码</label>
+      <input type="password" id="regPassword" placeholder="请输入密码">
+    </div>
+
+    <div class="form-group">
+      <label for="regConfirm">确认密码</label>
+      <input type="password" id="regConfirm" placeholder="请再次输入密码">
+    </div>
+
+    <button class="btn" onclick="handleRegister()">注 册</button>
+
+    <div class="switch-link">
+      已有账号？<a onclick="switchToLogin()">返回登录</a>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div class="success-box" id="successBox">
+    <div class="icon">🎉</div>
+    <h2>成功！</h2>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://qvewhcptokotjspdeaqz.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_gMwAaeR2IWgiLq-K2zoUbQ_chfxFMwO';
+    const TABLE = 'main';
+
+    function supabaseHeaders() {
+      return {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      };
+    }
+
+    // ========== 登录 ==========
+    async function handleLogin() {
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errorMsg = document.getElementById('loginErrorMsg');
+      const btn = document.querySelector('#loginBox .btn');
+
+      if (!username || !password) {
+        errorMsg.textContent = '请输入用户名和密码';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+      errorMsg.classList.remove('show');
+
+      try {
+        // 查询数据库：用户名和密码是否匹配
+        const url = SUPABASE_URL + '/rest/v1/' + TABLE
+          + '?' + encodeURIComponent('用户名') + '=eq.' + encodeURIComponent(username)
+          + '&' + encodeURIComponent('密码') + '=eq.' + encodeURIComponent(password)
+          + '&limit=1';
+        const res = await fetch(url, { headers: supabaseHeaders() });
+        const data = await res.json();
+
+        if (data.length > 0) {
+          window.location.href = 'home.html?username=' + encodeURIComponent(username);
+        } else {
+          errorMsg.textContent = '用户名或密码错误';
+          errorMsg.classList.add('show');
+        }
+      } catch (e) {
+        errorMsg.textContent = '网络错误，请稍后重试';
+        errorMsg.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '登 录';
+      }
+    }
+
+    // ========== 注册 ==========
+    async function handleRegister() {
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const confirm = document.getElementById('regConfirm').value;
+      const errorMsg = document.getElementById('registerErrorMsg');
+      const btn = document.querySelector('#registerBox .btn');
+
+      if (!username || !password || !confirm) {
+        errorMsg.textContent = '请填写所有字段';
+        errorMsg.classList.add('show');
+        return;
+      }
+      if (password !== confirm) {
+        errorMsg.textContent = '两次输入的密码不一致';
+        errorMsg.classList.add('show');
+        return;
+      }
+      if (username.length < 2) {
+        errorMsg.textContent = '用户名至少需要 2 个字符';
+        errorMsg.classList.add('show');
+        return;
+      }
+      if (password.length < 4) {
+        errorMsg.textContent = '密码至少需要 4 个字符';
+        errorMsg.classList.add('show');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = '注册中...';
+      errorMsg.classList.remove('show');
+
+      try {
+        // 1. 检查用户名是否已存在
+        const checkUrl = SUPABASE_URL + '/rest/v1/' + TABLE
+          + '?' + encodeURIComponent('用户名') + '=eq.' + encodeURIComponent(username)
+          + '&limit=1';
+        const checkRes = await fetch(checkUrl, { headers: supabaseHeaders() });
+        const existing = await checkRes.json();
+
+        if (existing.length > 0) {
+          errorMsg.textContent = '该用户名已被注册，请换一个';
+          errorMsg.classList.add('show');
+          return;
+        }
+
+        // 2. 插入新用户到数据库
+        await fetch(SUPABASE_URL + '/rest/v1/' + TABLE, {
+          method: 'POST',
+          headers: {
+            ...supabaseHeaders(),
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ '用户名': username, '密码': password })
+        });
+
+        // 注册成功，跳回登录页并填入用户名
+        switchToLogin();
+        document.getElementById('loginUsername').value = username;
+      } catch (e) {
+        errorMsg.textContent = '网络错误，请稍后重试';
+        errorMsg.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '注 册';
+      }
+    }
+
+    // ========== 页面切换 ==========
+    function switchToRegister() {
+      document.getElementById('loginBox').classList.add('hide');
+      document.getElementById('registerBox').classList.remove('hide');
+      document.getElementById('successBox').classList.remove('show');
+      document.getElementById('regUsername').value = '';
+      document.getElementById('regPassword').value = '';
+      document.getElementById('regConfirm').value = '';
+      document.getElementById('registerErrorMsg').classList.remove('show');
+    }
+
+    function switchToLogin() {
+      document.getElementById('registerBox').classList.add('hide');
+      document.getElementById('loginBox').classList.remove('hide');
+      document.getElementById('successBox').classList.remove('show');
+      document.getElementById('loginErrorMsg').classList.remove('show');
+    }
+
+    // 回车键触发对应操作
+    document.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter') return;
+      const loginVisible = !document.getElementById('loginBox').classList.contains('hide');
+      const registerVisible = !document.getElementById('registerBox').classList.contains('hide');
+      if (loginVisible) handleLogin();
+      if (registerVisible) handleRegister();
+    });
+  </script>
+
+</body>
+</html>
